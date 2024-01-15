@@ -1,0 +1,49 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'default.html' %}
+{% load custom_filters %}
+
+
+{% block title %}
+{{ post.title }}
+{% endblock title %}
+
+
+{% block content %}
+<div class="card w-100">
+  <div class="card-body text-start">
+    <!--<p class="card-text text-secondary">Категории: 
+    {{ post.categories }}
+        {% for category in post.categories %}
+            {{ category }}
+        {% endfor %}
+    </p>-->
+    <h3 class="card-title text-primary">{{ post.title|censor }}</h3>
+    <p class="card-text text-secondary">
+        Дата: <span style='color: blue;'>{{ post.date_create|date:'d.m.Y' }}</span>, 
+        Автор: <span style='color: green; font-weight:bold'>{{ post.author }}</span>
+        {% if is_editable %}
+                ( <a href="/{{str_type}}/{{post.pk}}/edit">Изменить</a> | <a href="/{{str_type}}/{{post.pk}}/delete"> Удалить</a> )
+        {% endif %}
+    </p>
+    <p class="card-text text-dark">{{ post.text|censor|linebreaks }}</p>
+  </div>
+  <div class="card-body row text-start">
+    <div class="col">Категории:</div>
+    {% for  category in post.category.all %}
+        <div class="col">
+            {% if category in category_subscribes %}
+                <div class='text-success fw-bold'> {{category.name}} </div>
+                <div>            
+                <a href="/news/set-subscribe/{{category.pk}}?post={{post.pk}}&unsubscribe=1">Отписаться</a>
+                </div>
+            {% else %}
+                <div class='text-danger'> {{category.name}} </div>
+                <div>
+                <a class="fw-bold" href="/news/set-subscribe/{{category.pk}}?post={{post.pk}}">Подписаться</a>                          
+                </div>
+            {% endif %}              
+        </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}
